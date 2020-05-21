@@ -1,0 +1,139 @@
+From 4a5b40deea73b5e8f4e03cb3e56b419f40e2d93f Mon Sep 17 00:00:00 2001
+From: Rishabh Jain <rishabhjain9260@gmail.com>
+Date: Sat, 9 May 2020 21:54:39 +0545
+Subject: [PATCH] Create Patch File
+
+---
+ __pycache__/client3.cpython-37.pyc | Bin 0 -> 1174 bytes
+ client3.py                         |  10 +++++++---
+ client_test.py                     |  27 +++++++++++++++++++++++++--
+ tempCodeRunnerFile.py              |   1 +
+ 4 files changed, 33 insertions(+), 5 deletions(-)
+ create mode 100644 __pycache__/client3.cpython-37.pyc
+ create mode 100644 tempCodeRunnerFile.py
+
+diff --git a/__pycache__/client3.cpython-37.pyc b/__pycache__/client3.cpython-37.pyc
+new file mode 100644
+index 0000000000000000000000000000000000000000..81b9975d68659e95496f76b9d3f83ffb8cb77f6e
+GIT binary patch
+literal 1174
+zcmYjRy>Ht_6u%>n6lF_p>Tfm6wLs7csACsd3?XgP*lvLUF`O8Q(Ss6#<~>=oC{jM2
+z3R|Tob?DGPLLU1MbnDu&L&sY?W$)Cfk0(3m9p2a7<Gc6q1D`gV3k28CzyJ33k2)cL
+zSH|5!n>;}({z4{+q$v^9N=G<Wy27=R2__xkNmuxiN$)2jYSNcAlmXObFmTkLm%qRQ
+zEP_9!Q@T&yl%fIdtO@jdY4!nlvwOg1?1tRX8#?>2l43a_V&!rdmeG4htU?V|r?kt&
+znphVbViPuD1=b!DXvsRP!8&ZfW{<6tDW&A1JgLqXAb=IQ*doXqEi!d(Zx2tfmSfUx
+zzQel6;pF4K)}zk$cACdg+RqE!+1=UQ*}fQqy81eiU;cQV{6h(ek?iu2Go(GF;t8@6
+z<F&{&)s^P7h;;EadhJ-7y|>-cDcubsz5C>vm9(--)?=87Kk4uzmCJDqJW5lZ_qgr@
+z&j2Jy{zH_Gq2M~_XOMx4G&*q^>1dQEndZhTbRG{(P3NQVG?B&|sU(KE9TkIj4yM?q
+z#_Oedq}!hHF2=bARUMl;eh|+6>*zaIRaM=uL@lEDcW}_@zCPxAxdeWat3fe}Vko+p
+z?m5I7l`GxPvnu_${p^T8&(&F!@z;sc<0$0^mm^RKWHEG~9X;RM(h&EzG`_a=#n$NR
+zQ8!NUQa^e)x-yM3(EC`~k*y4$FDyLWfZoI1psI;yag}+sDp`>o#40K!l@!6&kj^oV
+zqNMi;HrJhe!oLH}v2jUWwbqs!Mm);ot$xZ?HQYm6aoZ8KTbDcK)LzV41079(dA_XT
+zwb3ekWP}BjQMF`m!*CcSSr|?}eNnYq@&^TvH2(~n-FZ-a&arkY?K7ygCxMNIe#ZUg
+z>7H@-558@GB$mc1O_S4y3J{Ei7XI8eOeaGS?7YY`;VY~o9}4fqtAm%{8+vGa^gfX+
+z8bTNvmf*yVhrVZEXlOjdf-FSsE^-Yc=Of6B-^<l7(uOIBr133O3gO#K3l(5_7C5T<
+zIjCwl7AzKXnf_m!D(t9vuO1H(*(rRrhDQZQ7Errg<}xR!<93%RcNty483%OJ`48YH
+BF^vEK
+
+literal 0
+HcmV?d00001
+
+diff --git a/client3.py b/client3.py
+index f1771c3..49f9154 100644
+--- a/client3.py
++++ b/client3.py
+@@ -35,14 +35,16 @@ def getDataPoint(quote):
+ 	stock = quote['stock']
+ 	bid_price = float(quote['top_bid']['price'])
+ 	ask_price = float(quote['top_ask']['price'])
+-	price = bid_price
++	price = (bid_price + ask_price)/2
+ 	return stock, bid_price, ask_price, price
+ 
+ def getRatio(price_a, price_b):
+ 	""" Get ratio of price_a and price_b """
+ 	""" ------------- Update this function ------------- """
+ 	""" Also create some unit tests for this function in client_test.py """
+-	return 1
++	if (price_b == 0):
++		return
++	return price_a/price_b
+ 
+ # Main
+ if __name__ == "__main__":
+@@ -52,8 +54,10 @@ if __name__ == "__main__":
+ 		quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
+ 
+ 		""" ----------- Update to get the ratio --------------- """
++		prices = {}
+ 		for quote in quotes:
+ 			stock, bid_price, ask_price, price = getDataPoint(quote)
++			prices[stock] = price
+ 			print ("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+ 
+-		print ("Ratio %s" % getRatio(price, price))
++		print ("Ratio %s" % (getRatio(prices['ABC'], prices['DEF'])))
+diff --git a/client_test.py b/client_test.py
+index af2bf26..60fb4b8 100644
+--- a/client_test.py
++++ b/client_test.py
+@@ -1,5 +1,5 @@
+ import unittest
+-from client3 import getDataPoint
++from client3 import getDataPoint, getRatio
+ 
+ class ClientTest(unittest.TestCase):
+   def test_getDataPoint_calculatePrice(self):
+@@ -8,6 +8,8 @@ class ClientTest(unittest.TestCase):
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
+     """ ------------ Add the assertion below ------------ """
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote),(quote['stock'],quote['top_bid']['price'],quote['top_ask']['price'],(quote['top_bid']['price'] + quote['top_ask']['price'])/2))
+ 
+   def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
+     quotes = [
+@@ -15,10 +17,31 @@ class ClientTest(unittest.TestCase):
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
+     """ ------------ Add the assertion below ------------ """
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote),(quote['stock'],quote['top_bid']['price'],quote['top_ask']['price'],(quote['top_bid']['price'] + quote['top_ask']['price'])/2))
+ 
+ 
+   """ ------------ Add more unit tests ------------ """
+-
++  
++  def test_getRatio_calculateRatio(self):
++    quotes = [
++      {'top_ask': {'price': 120.48, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
++      {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'},
++      {'top_ask': {'price': 112.58, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'GHI'},
++      {'top_ask': {'price': 0, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'JKL'},
++      {'top_ask': {'price': 120.48, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 0, 'size': 109}, 'id': '0.109974697771', 'stock': 'MNO'},
++      #{'top_ask': {'price': 0, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 0, 'size': 81}, 'id': '0.109974697771', 'stock': 'PQR'}
++      #Uncomment the above line for division with zero!
++    ]
++    prices = {}
++    stocks = []
++    for quote in quotes:
++      stock, bid_price, ask_price, price = getDataPoint(quote)
++      prices[stock] = price
++      stocks.append(stock)
++    for index,x in enumerate(stocks):
++      if(index < (len(stocks) - 1)):
++        self.assertEqual(getRatio(prices[x],prices[stocks[index+1]]),(prices[x]/prices[stocks[index+1]]))
+ 
+ 
+ if __name__ == '__main__':
+diff --git a/tempCodeRunnerFile.py b/tempCodeRunnerFile.py
+new file mode 100644
+index 0000000..ef629ac
+--- /dev/null
++++ b/tempCodeRunnerFile.py
+@@ -0,0 +1 @@
++dateutil.parser
+\ No newline at end of file
+-- 
+2.21.0.windows.1
+
